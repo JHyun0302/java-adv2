@@ -2,6 +2,7 @@ package chat.server;
 
 import chat.server.command.ChangeCommand;
 import chat.server.command.Command;
+import chat.server.command.DefaultCommand;
 import chat.server.command.ExitCommand;
 import chat.server.command.JoinCommand;
 import chat.server.command.MessageCommand;
@@ -10,16 +11,14 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Command Pattern 적용
- */
-public class CommandManagerV3 implements CommandManager{
+public class CommandManagerV4 implements CommandManager{
 
     private static final String DELIMITER = "\\|";
     private final SessionManager sessionManager;
     private final Map<String, Command> commands = new HashMap<>();
+    private final Command defaultCommand = new DefaultCommand();
 
-    public CommandManagerV3(SessionManager sessionManager) {
+    public CommandManagerV4(SessionManager sessionManager) {
         this.sessionManager = sessionManager;
         commands.put("/join", new JoinCommand(sessionManager));
         commands.put("/message", new MessageCommand(sessionManager));
@@ -33,11 +32,8 @@ public class CommandManagerV3 implements CommandManager{
         String[] args = totalMessage.split(DELIMITER);
         String key = args[0];
 
-        Command command = commands.get(key);
-        if (command == null) {
-            session.send("처리할 수 없는 명령어 입니다: " + totalMessage);
-            return;
-        }
+        //NullObject Pattern
+        Command command = commands.getOrDefault(key, defaultCommand);
         command.execute(args, session);
     }
 }
