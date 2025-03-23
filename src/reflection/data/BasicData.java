@@ -9,7 +9,7 @@ public class BasicData {
         System.out.println("BasicData.BasicData");
     }
 
-    public BasicData(String data) {
+    private BasicData(String data) {
         System.out.println("BasicData.BasicData: " + data);
     }
 
